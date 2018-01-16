@@ -1,6 +1,15 @@
 import pandas
 
-pd = pandas.read_csv("/Users/xyan/pycharm_project/Kaggle_learning/Titanic/data/train.csv")
-pd = pd.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], 1)
-print(pd.Sex[0])
-pd.to_csv("test.csv")
+pd_csv = pandas.read_csv("./data/train.csv")
+# print(pd_csv)
+pd_csv = pd_csv.drop(['PassengerId', 'Pclass', 'Name', 'Sex', 'Ticket', 'Cabin', 'Fare', 'Embarked', ], 1)
+pd_csv_without_age = (pd_csv[pd_csv.isnull().any(axis=1)])
+pd_csv_without_age = pd_csv_without_age.drop(['Age'], 1)
+pd_csv_without_age = pd_csv_without_age.drop(pd_csv_without_age.columns[0], axis=1)
+print(pd_csv_without_age)
+
+pd_csv_with_age = pd_csv.dropna(axis=0, how='any')
+print(pd_csv_with_age)
+
+pd_csv_with_age.to_csv("./data/test_with_age.csv", index=False)
+pd_csv_without_age.to_csv("./data/test_without_age.csv", index=False)
