@@ -2,13 +2,11 @@
 # -*- coding: UTF-8 -*-
 
 
-import csv
 import random
 from functools import reduce
 
-from numpy import *
-
 import pandas as pd
+from numpy import *
 
 
 def sigmoid(inX):
@@ -267,52 +265,26 @@ def gradient_check(network, sample_feature, sample_label):
 
 
 def train_data_set():
-    # with open("./data/train_new.csv", "r", newline='') as csvfile:
-    #     csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    #     content = [line for line in csv_reader]
-    # data_set = []
-    # for line in content:
-    #     # for number in line[1:]:
-    #     #     new_line = int(float(number))
-    #     new_line = [float(number) for number in line[1:]]
-    #     data_set.append(new_line)
-    #
-    # origin_lable = [int(line[0]) for line in content]
-    # labels = _convert_label(origin_lable)
     pd_data = pd.read_csv("./data/test_with_age.csv")
     # print(pd_data)
     ages = pd_data.Age
 
     # convert age into vector
     lables_list = []
-    # data_set = []
     for age in ages:
-        lable_initial = [0.1] * 80
-        lable_initial[int(age) - 1] = 0.9
+        lable_initial = [0.1] * 9
+        lable_initial[int(age / 10)] = 0.9
         lables_list.append(lable_initial)
     lables = lables_list
     pd_data = pd_data.drop(pd_data.columns[1], axis=1)
-    print(type(pd_data))
     data_set = pd_data.values.tolist()
-
     return lables, data_set
-
-    # return labels, data_set
-
-    # def _convert_label(lables):
-    #     new_list = []
-    #     for item in lables:
-    #         if item == 0:
-    #             new_list.append([0.9, 0.1])
-    #         elif item == 1:
-    #             new_list.append([0.1, 0.9])
-    #     return new_list
 
 
 def train(network):
     assert isinstance(network, object)
     labels, data_set = train_data_set()
-    network.train(labels, data_set, 0.01, 1000)
+    network.train(labels, data_set, 0.01, 200)
 
 
 def test(network, data):
@@ -342,8 +314,21 @@ def gradient_check_test():
 if __name__ == '__main__':
     # gradient_check_test()
     # 设置神经网络初始化参数，初始化神经网络,列表长度表示网络层数，每个数字表示每一层节点个数
-    #
-    # pd.read_csv()
 
-    net = Network([6, 4, 2])
+    # train the network to predict age
+    net = Network([3, 4, 9])
     train(net)
+    print("start to predict")
+    res = net.predict([1, 0, 0])
+
+    # print(res.index(min(res)))
+    pd_age_test_data = pd.read_csv('./data/test_without_age.csv')
+    # print(pd_age_test_data)
+    age_list = []
+    for line in pd_age_test_data.values.tolist():
+        print("start to predict")
+        res = net.predict(line)
+        predict_age = res.index(min(res))
+        age_list.append(predict_age)
+    pd_age = pd.DataFrame(age_list)
+    pd_age.to_csv("./data/predicted_age.csv")
