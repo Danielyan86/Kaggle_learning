@@ -7,6 +7,7 @@ import random
 from functools import reduce
 
 from numpy import *
+import pandas as pd
 
 
 def sigmoid(inX):
@@ -265,22 +266,25 @@ def gradient_check(network, sample_feature, sample_label):
 
 
 def train_data_set():
-    # data = pd.read_csv('iris.data', header=None)
-    # x, y = data[[0, 1, 2, 3]], pd.Categorical(data[4]).codes
-    # data_set = [x.values.tolist()][0]
-    with open("./data/train_new.csv", "r", newline='') as csvfile:
-        csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        content = [line for line in csv_reader]
-    data_set = []
-    for line in content:
-        # for number in line[1:]:
-        #     new_line = int(float(number))
-        new_line = [float(number) for number in line[1:]]
-        data_set.append(new_line)
-
-    origin_lable = [int(line[0]) for line in content]
-    labels = _convert_label(origin_lable)
-    return labels, data_set
+    # with open("./data/train_new.csv", "r", newline='') as csvfile:
+    #     csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    #     content = [line for line in csv_reader]
+    # data_set = []
+    # for line in content:
+    #     # for number in line[1:]:
+    #     #     new_line = int(float(number))
+    #     new_line = [float(number) for number in line[1:]]
+    #     data_set.append(new_line)
+    #
+    # origin_lable = [int(line[0]) for line in content]
+    # labels = _convert_label(origin_lable)
+    # return labels, data_set
+    pd_reader = pd.read_csv("./data/train_new.csv")
+    origin_lable = pd_reader.Survived.values.tolist()
+    lables = _convert_label(origin_lable)
+    pd_reader = pd_reader.drop(['Survived'], 1)
+    data_set = pd_reader.values.tolist()
+    return lables, data_set
 
 
 def _convert_label(lables):
@@ -327,40 +331,59 @@ if __name__ == '__main__':
     # gradient_check_test()
     # 设置神经网络初始化参数，初始化神经网络,列表长度表示网络层数，每个数字表示每一层节点个数
     #
-    with open("./data/train_new.csv", "r", newline='') as csvfile:
-        csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        test_data = []
-        expected_data = []
-        for line in csv_reader:
-            test_data.append([float(number) for number in line])
-            # expected_data.append(int(line[0]))
+    # with open("./data/train_new.csv", "r", newline='') as csvfile:
+    #     csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    #     test_data = []
+    #     expected_data = []
+    #     for line in csv_reader:
+    #         test_data.append([float(number) for number in line])
+    #         # expected_data.append(int(line[0]))
+    #
+    # net = Network([6, 4, 2])
+    # train(net)
+    # right_number = 0
+    # for data in test_data:
+    #     result_two_dimension = net.predict(data[1:])
+    #     result = 0 if result_two_dimension[0] > result_two_dimension[1] else 1
+    #     if result == data[0]:
+    #         right_number = right_number + 1
+    # print(right_number)
+    #
+    # with open("./data/test_new.csv", "r", newline='') as csvfile:
+    #     csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    #     test_data = []
+    #     for line in csv_reader:
+    #         test_data.append([float(num) for num in line])
+    #
+    # result_list_final = []
+    # for data in test_data:
+    #     result_two_dimension = net.predict(data[1:])
+    #     result = 0 if result_two_dimension[0] > result_two_dimension[1] else 1
+    #     result_list_final.append(result)
+    #
+    # with open("./data/my_submission.csv", "w", newline='') as csvfile:
+    #     csv_writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    #     print(result_list_final)
+    #     result_combine = list(zip(range(892, 1310), result_list_final))
+    #     # print(list(result_combine))
+    #     for item in result_combine:
+    #         csv_writer.writerow(item)
 
-    net = Network([6, 4, 2])
+    net = Network([7, 5, 5, 2])
     train(net)
-    right_number = 0
-    for data in test_data:
-        result_two_dimension = net.predict(data[1:])
-        result = 0 if result_two_dimension[0] > result_two_dimension[1] else 1
-        if result == data[0]:
-            right_number = right_number + 1
-    print(right_number)
 
-    with open("./data/test_new.csv", "r", newline='') as csvfile:
-        csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        test_data = []
-        for line in csv_reader:
-            test_data.append([float(num) for num in line])
-
-    result_list_final = []
-    for data in test_data:
-        result_two_dimension = net.predict(data[1:])
-        result = 0 if result_two_dimension[0] > result_two_dimension[1] else 1
-        result_list_final.append(result)
-
-    with open("./data/my_submission.csv", "w", newline='') as csvfile:
-        csv_writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-        print(result_list_final)
-        result_combine = list(zip(range(892, 1310), result_list_final))
-        # print(list(result_combine))
-        for item in result_combine:
-            csv_writer.writerow(item)
+    pd_reader = pd.read_csv("./data/test_new.csv")
+    test_data_list = pd_reader.values.tolist()
+    print(test_data_list)
+    for item in test_data_list:
+        print(net.predict(item))
+    res_list = [net.predict(n) for n in test_data_list]
+    final_res = [
+    ]
+    for item in res_list:
+        if item[0] > item[1]:
+            final_res.append(0)
+        else:
+            final_res.append(1)
+    final_res = list(zip(range(892, 1310), final_res))
+    pd.DataFrame(final_res).to_csv("./data/my_submission.csv", index=False)
