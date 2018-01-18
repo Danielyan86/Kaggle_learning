@@ -328,48 +328,8 @@ def gradient_check_test():
 
 
 if __name__ == '__main__':
-    # gradient_check_test()
-    # 设置神经网络初始化参数，初始化神经网络,列表长度表示网络层数，每个数字表示每一层节点个数
-    #
-    # with open("./data/train_new.csv", "r", newline='') as csvfile:
-    #     csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    #     test_data = []
-    #     expected_data = []
-    #     for line in csv_reader:
-    #         test_data.append([float(number) for number in line])
-    #         # expected_data.append(int(line[0]))
-    #
-    # net = Network([6, 4, 2])
-    # train(net)
-    # right_number = 0
-    # for data in test_data:
-    #     result_two_dimension = net.predict(data[1:])
-    #     result = 0 if result_two_dimension[0] > result_two_dimension[1] else 1
-    #     if result == data[0]:
-    #         right_number = right_number + 1
-    # print(right_number)
-    #
-    # with open("./data/test_new.csv", "r", newline='') as csvfile:
-    #     csv_reader = csv.reader(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    #     test_data = []
-    #     for line in csv_reader:
-    #         test_data.append([float(num) for num in line])
-    #
-    # result_list_final = []
-    # for data in test_data:
-    #     result_two_dimension = net.predict(data[1:])
-    #     result = 0 if result_two_dimension[0] > result_two_dimension[1] else 1
-    #     result_list_final.append(result)
-    #
-    # with open("./data/my_submission.csv", "w", newline='') as csvfile:
-    #     csv_writer = csv.writer(csvfile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-    #     print(result_list_final)
-    #     result_combine = list(zip(range(892, 1310), result_list_final))
-    #     # print(list(result_combine))
-    #     for item in result_combine:
-    #         csv_writer.writerow(item)
 
-    net = Network([7, 5, 5, 2])
+    net = Network([7, 4, 3, 2])
     train(net)
 
     pd_reader = pd.read_csv("./data/test_new.csv")
